@@ -521,18 +521,21 @@ public class ClassifierWindow extends WindowManager {
      */
     private static Matrix vectorizeY(String yValue) {
         Matrix vector = new Matrix(NUM_OUTPUT_CLASSES, 1);
-        vector.set(Integer.parseInt(yValue), 1, 1);
+        vector.set(Integer.parseInt(yValue), 0, 1);
         return vector;
     }
 
     /* This method takes as input a String representing the binary representation of a digit.  Since the String should
      * have length INPUT_VECTOR_DIMENSION, one should end up with a matrix that has dimensions
-     * INPUT_VECTROR_DIMENSION x 1.  Note that the 
+     * INPUT_VECTOR_DIMENSION x 1.  Note that the 
      * 
      */
     private static Matrix inputStringToMatrix(String input) {
-
-        return null;
+    	Matrix vector = new Matrix(INPUT_VECTOR_DIMENSION, 1);
+    	for(int i = 0; i < INPUT_VECTOR_DIMENSION; i++){
+    		vector.set(i, 0, Character.getNumericValue(input.charAt(i)));
+    	}
+        return vector;
     }
 
     /* This method takes as input the size (number of rows and number of cols) of a matrix, and creates a matrix
