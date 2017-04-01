@@ -543,8 +543,13 @@ public class ClassifierWindow extends WindowManager {
      * where epsilon is the instance variable of the same name.
      */
     private Matrix createInitialTheta(int rows, int cols) {
-
-        return null;
+    	Matrix vector = new Matrix(rows, cols);
+    	for(int i = 0; i < rows; i++){
+    		for(int j = 0; j < cols; j++){
+    			vector.set(i, j, generator.nextDouble()*epsilon*2-epsilon);
+    		}
+    	}
+        return vector;
 
     }
 
