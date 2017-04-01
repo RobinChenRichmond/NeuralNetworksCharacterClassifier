@@ -409,8 +409,16 @@ public class ClassifierWindow extends WindowManager {
      * matrix
      */
     private int getMax(Matrix m) {
+    	int index = 0;
+    	int max = Integer.MIN_VALUE;
+    	for(int i = 0; i < NUM_OUTPUT_CLASSES; i++){
+    		if(m.get(0, i)>max){
+    			index = i;
+    			max = (int) m.get(0,i);
+    		}
+    	}
 
-        return 0;
+        return index;
 
     }
 
