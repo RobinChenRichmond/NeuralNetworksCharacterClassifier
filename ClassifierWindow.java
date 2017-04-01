@@ -1,3 +1,4 @@
+
 /**
  * The purpose of this class is to act as the main control window for performing
  * a classification task. Among functions this class should perform are
@@ -409,17 +410,15 @@ public class ClassifierWindow extends WindowManager {
      * matrix
      */
     private int getMax(Matrix m) {
-    	int index = 0;
-    	int max = Integer.MIN_VALUE;
-    	for(int i = 0; i < NUM_OUTPUT_CLASSES; i++){
-    		if(m.get(0, i)>max){
-    			index = i;
-    			max = (int) m.get(0,i);
-    		}
-    	}
-
+        int index = 0;
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < NUM_OUTPUT_CLASSES; i++) {
+            if (m.get(0, i) > max) {
+                index = i;
+                max = (int) m.get(0, i);
+            }
+        }
         return index;
-
     }
 
     /* 
@@ -521,8 +520,8 @@ public class ClassifierWindow extends WindowManager {
      *  
      */
     private static Matrix vectorizeY(String yValue) {
-        Matrix vector = new Matrix(1, NUM_OUTPUT_CLASSES);
-        vector.set(1, Integer.parseInt(yValue), 1);
+        Matrix vector = new Matrix(NUM_OUTPUT_CLASSES, 1);
+        vector.set(Integer.parseInt(yValue), 1, 1);
         return vector;
     }
 
