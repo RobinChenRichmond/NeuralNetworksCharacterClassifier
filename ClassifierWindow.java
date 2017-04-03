@@ -569,7 +569,7 @@ public class ClassifierWindow extends WindowManager {
     private Matrix logisticFunction(Matrix x) {
     	Matrix vector = new Matrix(x.getRowDimension(), 1);
     	for(int i = 0; i < x.getRowDimension(); i++){
-    		vector.set(i, 0, 1/(1+Math.exp(0-x.get(i, 0))));
+    		vector.set(i, 0, logisticFunction(x.get(i, 0)));
     	}
         return vector;
     }
