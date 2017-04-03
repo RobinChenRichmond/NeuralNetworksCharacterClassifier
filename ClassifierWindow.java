@@ -558,7 +558,7 @@ public class ClassifierWindow extends WindowManager {
      */
     private double logisticFunction(double x) {
 
-        return 0;
+        return (1/(1+Math.exp(0-x)));
 
     }
 
