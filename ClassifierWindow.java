@@ -624,6 +624,15 @@ public class ClassifierWindow extends WindowManager {
     	for(int i = 0; i < vector.length; i++){
     		vector[i] = new Matrix(thetaValues[i].getRowDimension(),thetaValues[i].getColumnDimension());
     	}
+    	for(int p = 1; p < vector.length; p++){
+    		Matrix temp = new Matrix
+    		
+    		for(int q = 0; q < thetaValues[p].getRowDimension(); q++){
+    			for(int r = 0; r < thetaValues[p].getColumnDimension(); r++){
+    				
+    			}
+    		}
+    	}
     	
         return vector;
     }
