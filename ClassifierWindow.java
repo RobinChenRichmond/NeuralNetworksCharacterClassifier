@@ -620,9 +620,12 @@ public class ClassifierWindow extends WindowManager {
      * as the value of epsilon for gradient approximation purposes.
      */
     private Matrix[] gradientCheck(Matrix[] trainingData, Matrix[] outputData, Matrix[] thetaValues, double lambdaValue) {
-
-        return null;
-
+    	Matrix[] vector = new Matrix[thetaValues.length];
+    	for(int i = 0; i < vector.length; i++){
+    		vector[i] = new Matrix(thetaValues[i].getRowDimension(),thetaValues[i].getColumnDimension());
+    	}
+    	
+        return vector;
     }
 
     /* 
