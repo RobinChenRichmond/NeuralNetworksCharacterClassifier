@@ -579,8 +579,26 @@ public class ClassifierWindow extends WindowManager {
      * computes the output vector of the neural network. That is, it performs forward propagation.
      */
     private Matrix computeHypothesis(Matrix input, Matrix theta1, Matrix theta2) {
-
-        return null;
+        
+        //adding bias unit
+        Matrix a1 = new Matrix(input.getRowDimension() + 1, 1);
+        a1.set(0, 0, 1);
+        for(int i = 1; i <= input.getRowDimension(); i++){
+            a1.set(i, 0, input.get(i, 0));
+        }
+        //times weight
+        Matrix z2 = theta1.times(a1);
+        //apply logistic function
+        Matrix input2 = logisticFunction(z2);
+        
+        Matrix a2 = new Matrix(input.getRowDimension() + 1, 1);
+        a2.set(0, 0, 1);
+        for(int j = 1; j <= input2.getRowDimension(); j++){
+            a2.set(j, 0, input2.get(j, 0));
+        }
+        Matrix z3 = theta2.times(a2);
+        Matrix a3 = logisticFunction(z3);
+        return a3;
 
     }
 
