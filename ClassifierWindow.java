@@ -81,6 +81,7 @@ public class ClassifierWindow extends WindowManager {
     private Matrix[] theta;
     private Matrix[] training;
     private Matrix[] output;
+    private Matrix outputA2;
     private double lambda;
     private double alpha;
     private int numIterations;
@@ -434,18 +435,36 @@ public class ClassifierWindow extends WindowManager {
         theta[1] = createInitialTheta(HIDDEN_LAYER_SIZE, INPUT_VECTOR_DIMENSION + 1);
         theta[2] = createInitialTheta(NUM_OUTPUT_CLASSES, HIDDEN_LAYER_SIZE + 1);
         
+        Matrix[] output = new Matrix[3];
+
+        Matrix delta2 = new Matrix(NUM_OUTPUT_CLASSES,HIDDEN_LAYER_SIZE+1);
+    	Matrix delta1 = new Matrix(HIDDEN_LAYER_SIZE,HIDDEN_LAYER_SIZE+1);
+    	
         for(int i = 0; i < training.length; i++){
         	Matrix forward = computeHypothesis(training[i], theta[1], theta[2]);
         	Matrix err3 = new Matrix(NUM_OUTPUT_CLASSES,1);
         	for(int j = 0; j < NUM_OUTPUT_CLASSES; j++){
         		err3.set(j, 0, forward.get(j, 0) - output[i].get(j, 0));
         	}
-        	Matrix err2 = new Matrix(HIDDEN_LAYER_SIZE,HIDDEN_LAYER_SIZE+1);
-
+        	Matrix err2 = new Matrix(HIDDEN_LAYER_SIZE+1,1);
+        	err2 = theta[2].transpose().times(err3);
+        	
+        	for(int k = 0; k < HIDDEN_LAYER_SIZE+1; k++){
+        		err2.set(k, 0, err2.get(k, 0)*outputA2.get(k, 0)*(1-outputA2.get(k, 0)));
+        	}
+        	
+        	delta2 = delta2.plus(err3.times(outputA2.transpose()));
+        	Matrix updateErr2 = new Matrix(HIDDEN_LAYER_SIZE,1);
+        	for(int l = 0; l < HIDDEN_LAYER_SIZE; l++){
+        		updateErr2.set(l, 0, err2.get(l+1, 0));
+        	}
+        	delta1 = delta1.plus(updateErr2.times(training[i].transpose()));
         }
+        output[1] = delta1;
+        output[2] = delta2;
         
 
-        return null;
+        return output;
     }
 
     private void readTrainingData() {
@@ -607,6 +626,7 @@ public class ClassifierWindow extends WindowManager {
         for(int j = 1; j <= input2.getRowDimension(); j++){
             a2.set(j, 0, input2.get(j, 0));
         }
+        outputA2 = a2;
         Matrix z3 = theta2.times(a2);
         Matrix a3 = logisticFunction(z3);
         return a3;
