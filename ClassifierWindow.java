@@ -703,7 +703,7 @@ public class ClassifierWindow extends WindowManager {
         jTheta *= (-1 / trainigData.getRowDimension());
 
         double reg = 0;
-        
+
 
 
         return jTheta;
@@ -716,10 +716,11 @@ public class ClassifierWindow extends WindowManager {
      */
     private double sumSquaredMatrixEntries(Matrix m) {
         double sum = 0;
-        Matrix square = m.times(m);
+        // Matrix square = m.times(m);
         for (int i = 0; i < square.getRowDimension(); i++){
             for (int j = 1; j < square.getColumnDimension(); j++)
-                sum += square.get(i,j); 
+                double entry = m.get(i,j);
+                sum += (entry * entry); 
         }
         return sum;
     }
