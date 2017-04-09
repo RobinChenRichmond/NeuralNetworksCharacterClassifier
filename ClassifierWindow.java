@@ -285,6 +285,10 @@ public class ClassifierWindow extends WindowManager {
 
             Matrix inputMatrix = inputStringToMatrix(imageVector);
             Matrix resultMatrix = computeHypothesis(inputMatrix, theta[1], theta[2]);
+            
+            for(int i = 0; i < 10; i++){
+            	System.out.println(resultMatrix.get(i, 0));
+            }
 
             int classifiedOutput = getMax(resultMatrix);
 
@@ -414,9 +418,9 @@ public class ClassifierWindow extends WindowManager {
         int index = 0;
         int max = Integer.MIN_VALUE;
         for (int i = 0; i < NUM_OUTPUT_CLASSES; i++) {
-            if (m.get(0, i) > max) {
+            if (m.get(i, 0) > max) {
                 index = i;
-                max = (int) m.get(0, i);
+                max = (int) m.get(i, 0);
             }
         }
         return index;
@@ -617,8 +621,8 @@ public class ClassifierWindow extends WindowManager {
         //adding bias unit
         Matrix a1 = new Matrix(input.getRowDimension() + 1, 1);
         a1.set(0, 0, 1);
-        for(int i = 1; i < input.getRowDimension(); i++){
-            a1.set(i, 0, input.get(i, 0));
+        for(int i = 0; i < input.getRowDimension(); i++){
+            a1.set(i+1, 0, input.get(i, 0));
         }
         //times weight
         Matrix z2 = theta1.times(a1);
@@ -627,8 +631,8 @@ public class ClassifierWindow extends WindowManager {
         
         Matrix a2 = new Matrix(input.getRowDimension() + 1, 1);
         a2.set(0, 0, 1);
-        for(int j = 1; j < input2.getRowDimension(); j++){
-            a2.set(j, 0, input2.get(j, 0));
+        for(int j = 0; j < input2.getRowDimension(); j++){
+            a2.set(j+1, 0, input2.get(j, 0));
         }
         outputA2 = a2;
         Matrix z3 = theta2.times(a2);
