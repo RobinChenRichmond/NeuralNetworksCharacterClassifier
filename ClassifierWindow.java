@@ -433,6 +433,17 @@ public class ClassifierWindow extends WindowManager {
         // This neural network has only three layers, so only two theta matrices
         theta[1] = createInitialTheta(HIDDEN_LAYER_SIZE, INPUT_VECTOR_DIMENSION + 1);
         theta[2] = createInitialTheta(NUM_OUTPUT_CLASSES, HIDDEN_LAYER_SIZE + 1);
+        
+        for(int i = 0; i < training.length; i++){
+        	Matrix forward = computeHypothesis(training[i], theta[1], theta[2]);
+        	Matrix err3 = new Matrix(NUM_OUTPUT_CLASSES,1);
+        	for(int j = 0; j < NUM_OUTPUT_CLASSES; j++){
+        		err3.set(j, 0, forward.get(j, 0) - output[i].get(j, 0));
+        	}
+        	Matrix err2 = new Matrix(HIDDEN_LAYER_SIZE,HIDDEN_LAYER_SIZE+1);
+
+        }
+        
 
         return null;
     }
