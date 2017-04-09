@@ -682,8 +682,20 @@ public class ClassifierWindow extends WindowManager {
      * this choice of training data, theta values, and lambda.
      */
     private double jTheta(Matrix[] trainingData, Matrix[] outputData, Matrix[] thetaValues, double lambdaValue) {
+        double jTheta = 0;
+        for (int i = 1; i < trainingData.getRowDimension(); i++){
+            Matrix hyp = logisticFunction(trainingData.get(i,0));
+            for (int k = 1; k < NUM_OUTPUT_CLASSES; k++){
+                jTheta += outputData.get(k,i)*log(hyp.get(k,0))+(1-outputData.get(k,i)*log(1-hyp.get(k,0)));
+            }
+        }
+        jTheta *= (-1 / trainigData.getRowDimension());
 
-        return 0;
+        double reg = 0;
+        
+
+
+        return jTheta;
 
     }
 
@@ -692,9 +704,13 @@ public class ClassifierWindow extends WindowManager {
      * with the exception of the first column of the matrix, which it ignores.
      */
     private double sumSquaredMatrixEntries(Matrix m) {
-
-        return 0;
-
+        double sum = 0;
+        Matrix square = m.times(m);
+        for (int i = 0; i < square.getRowDimension(); i++){
+            for (int j = 1; j < square.getColumnDimension(); j++)
+                sum += square.get(i,j); 
+        }
+        return sum;
     }
 
     /* A helper method.  When debugging, it's sometimes convenient to be able to easily print out the dimensions of 
