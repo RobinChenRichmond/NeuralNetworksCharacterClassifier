@@ -435,7 +435,7 @@ public class ClassifierWindow extends WindowManager {
         theta[1] = createInitialTheta(HIDDEN_LAYER_SIZE, INPUT_VECTOR_DIMENSION + 1);
         theta[2] = createInitialTheta(NUM_OUTPUT_CLASSES, HIDDEN_LAYER_SIZE + 1);
         
-        Matrix[] output = new Matrix[3];
+        Matrix[] result = new Matrix[3];
 
         Matrix delta2 = new Matrix(NUM_OUTPUT_CLASSES,HIDDEN_LAYER_SIZE+1);
     	Matrix delta1 = new Matrix(HIDDEN_LAYER_SIZE,HIDDEN_LAYER_SIZE+1);
@@ -455,16 +455,20 @@ public class ClassifierWindow extends WindowManager {
         	
         	delta2 = delta2.plus(err3.times(outputA2.transpose()));
         	Matrix updateErr2 = new Matrix(HIDDEN_LAYER_SIZE,1);
+        	Matrix updateA = new Matrix(HIDDEN_LAYER_SIZE+1,1);
+        	updateA.set(0, 0, 1);
         	for(int l = 0; l < HIDDEN_LAYER_SIZE; l++){
         		updateErr2.set(l, 0, err2.get(l+1, 0));
+        		updateA.set(l+1, 0, training[i].get(l, 0));
         	}
-        	delta1 = delta1.plus(updateErr2.times(training[i].transpose()));
+        	
+        	delta1 = delta1.plus(updateErr2.times(updateA.transpose()));
         }
-        output[1] = delta1;
-        output[2] = delta2;
+        result[1] = delta1;
+        result[2] = delta2;
         
 
-        return output;
+        return result;
     }
 
     private void readTrainingData() {
@@ -613,7 +617,7 @@ public class ClassifierWindow extends WindowManager {
         //adding bias unit
         Matrix a1 = new Matrix(input.getRowDimension() + 1, 1);
         a1.set(0, 0, 1);
-        for(int i = 1; i <= input.getRowDimension(); i++){
+        for(int i = 1; i < input.getRowDimension(); i++){
             a1.set(i, 0, input.get(i, 0));
         }
         //times weight
@@ -623,7 +627,7 @@ public class ClassifierWindow extends WindowManager {
         
         Matrix a2 = new Matrix(input.getRowDimension() + 1, 1);
         a2.set(0, 0, 1);
-        for(int j = 1; j <= input2.getRowDimension(); j++){
+        for(int j = 1; j < input2.getRowDimension(); j++){
             a2.set(j, 0, input2.get(j, 0));
         }
         outputA2 = a2;
