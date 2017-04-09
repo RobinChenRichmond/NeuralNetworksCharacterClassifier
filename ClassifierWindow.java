@@ -694,17 +694,21 @@ public class ClassifierWindow extends WindowManager {
      */
     private double jTheta(Matrix[] trainingData, Matrix[] outputData, Matrix[] thetaValues, double lambdaValue) {
         double jTheta = 0;
-        for (int i = 1; i < trainingData.getRowDimension(); i++){
-            Matrix hyp = logisticFunction(trainingData.get(i,0));
-            for (int k = 1; k < NUM_OUTPUT_CLASSES; k++){
-                jTheta += outputData.get(k,i)*log(hyp.get(k,0))+(1-outputData.get(k,i)*log(1-hyp.get(k,0)));
+        for (int i = 0; i < trainingData.length; i++){
+            Matrix hyp = computeHypothesis(trainingData[i]);
+            for (int k = 0; k < NUM_OUTPUT_CLASSES; k++){
+                jTheta += outputData[i].get(k,0)*log(hyp.get(k,0))+(1-outputData[i].get(k,0))*log(1-hyp.get(k,0));
             }
         }
-        jTheta *= (-1 / trainigData.getRowDimension());
+        jTheta *= (-1 / trainigData.length);
 
         double reg = 0;
+        
+        for (int l = 0; l < thetaValues.length - 1; l++)
+            reg += sumSquaredMatrixEntries(thetaValues[l]);
 
-
+        jTheta += (reg*lambdaValue/(2*trainingData.length));
+ 
 
         return jTheta;
 
