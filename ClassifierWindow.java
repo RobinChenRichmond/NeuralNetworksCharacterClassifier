@@ -715,12 +715,12 @@ public class ClassifierWindow extends WindowManager {
     private double jTheta(Matrix[] trainingData, Matrix[] outputData, Matrix[] thetaValues, double lambdaValue) {
         double jTheta = 0;
         for (int i = 0; i < trainingData.length; i++){
-            Matrix hyp = computeHypothesis(trainingData[i]);
+            Matrix hyp = computeHypothesis(trainingData[i],theta[1],theta[2]);
             for (int k = 0; k < NUM_OUTPUT_CLASSES; k++){
-                jTheta += outputData[i].get(k,0)*log(hyp.get(k,0))+(1-outputData[i].get(k,0))*log(1-hyp.get(k,0));
+                jTheta += outputData[i].get(k,0)*Math.log(hyp.get(k,0))+(1-outputData[i].get(k,0))*Math.log(1-hyp.get(k,0));
             }
         }
-        jTheta *= (-1 / trainigData.length);
+        jTheta *= (-1 / trainingData.length);
 
         double reg = 0;
         
@@ -741,10 +741,11 @@ public class ClassifierWindow extends WindowManager {
     private double sumSquaredMatrixEntries(Matrix m) {
         double sum = 0;
         // Matrix square = m.times(m);
-        for (int i = 0; i < square.getRowDimension(); i++){
-            for (int j = 1; j < square.getColumnDimension(); j++)
+        for (int i = 0; i < m.getRowDimension(); i++){
+            for (int j = 1; j < m.getColumnDimension(); j++){
                 double entry = m.get(i,j);
                 sum += (entry * entry); 
+            }
         }
         return sum;
     }
