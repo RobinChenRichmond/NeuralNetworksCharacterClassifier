@@ -417,11 +417,11 @@ public class ClassifierWindow extends WindowManager {
      */
     private int getMax(Matrix m) {
         int index = 0;
-        int max = Integer.MIN_VALUE;
+        double max = Double.MIN_VALUE;
         for (int i = 0; i < NUM_OUTPUT_CLASSES; i++) {
             if (m.get(i, 0) > max) {
                 index = i;
-                max = (int) m.get(i, 0);
+                max = m.get(i, 0);
             }
         }
         return index;
@@ -470,8 +470,8 @@ public class ClassifierWindow extends WindowManager {
         	
         	delta1 = delta1.plus(updateErr2.times(updateA.transpose()));
         }
-        result[1] = delta1;
-        result[2] = delta2;
+        result[1] = theta[1].minus(delta1.times(1/training.length));
+        result[2] = theta[2].minus(delta2.times(1/training.length));
         
 
         return result;
@@ -631,7 +631,7 @@ public class ClassifierWindow extends WindowManager {
         //apply logistic function
         Matrix input2 = logisticFunction(z2);
         
-        Matrix a2 = new Matrix(input.getRowDimension() + 1, 1);
+        Matrix a2 = new Matrix(input2.getRowDimension() + 1, 1);
         a2.set(0, 0, 1);
         for(int j = 0; j < input2.getRowDimension(); j++){
             a2.set(j+1, 0, input2.get(j, 0));
