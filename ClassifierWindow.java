@@ -286,6 +286,7 @@ public class ClassifierWindow extends WindowManager {
             Matrix inputMatrix = inputStringToMatrix(imageVector);
             Matrix resultMatrix = computeHypothesis(inputMatrix, theta[1], theta[2]);
             
+            
             for(int i = 0; i < 10; i++){
             	System.out.println(resultMatrix.get(i, 0));
             }
@@ -441,8 +442,9 @@ public class ClassifierWindow extends WindowManager {
         
         Matrix[] result = new Matrix[3];
 
+        Matrix delta1 = new Matrix(HIDDEN_LAYER_SIZE,HIDDEN_LAYER_SIZE+1);
         Matrix delta2 = new Matrix(NUM_OUTPUT_CLASSES,HIDDEN_LAYER_SIZE+1);
-    	Matrix delta1 = new Matrix(HIDDEN_LAYER_SIZE,HIDDEN_LAYER_SIZE+1);
+    	
     	
         for(int i = 0; i < training.length; i++){
         	Matrix forward = computeHypothesis(training[i], theta[1], theta[2]);
