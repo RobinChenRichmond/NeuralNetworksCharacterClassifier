@@ -65,7 +65,7 @@ public class ClassifierWindow extends WindowManager {
     private static final long DEFAULT_SEED = 478978392;
     private static final double DEFAULT_LAMBDA_VALUE = 1.0;
     private static final double DEFAULT_ALPHA = 0.001;
-    private static final int DEFAULT_NUM_ITERATIONS = 5000000;
+    private static final int DEFAULT_NUM_ITERATIONS = 500;
     private static final double STOP_THRESHOLD = 0.0001;
     // This stop the program if we grow too far above our achieved minimum
     private static final double GROWTH_THRESHOLD = 5.0;
@@ -287,9 +287,9 @@ public class ClassifierWindow extends WindowManager {
             Matrix resultMatrix = computeHypothesis(inputMatrix, theta[1], theta[2]);
             
             
-            for(int i = 0; i < 10; i++){
+            /*for(int i = 0; i < 10; i++){
             	System.out.println(resultMatrix.get(i, 0));
-            }
+            }*/
 
             int classifiedOutput = getMax(resultMatrix);
 
@@ -439,42 +439,44 @@ public class ClassifierWindow extends WindowManager {
         // This neural network has only three layers, so only two theta matrices
         theta[1] = createInitialTheta(HIDDEN_LAYER_SIZE, INPUT_VECTOR_DIMENSION + 1);
         theta[2] = createInitialTheta(NUM_OUTPUT_CLASSES, HIDDEN_LAYER_SIZE + 1);
+    	
         
-        Matrix[] result = new Matrix[3];
-
-        Matrix delta1 = new Matrix(HIDDEN_LAYER_SIZE,HIDDEN_LAYER_SIZE+1);
-        Matrix delta2 = new Matrix(NUM_OUTPUT_CLASSES,HIDDEN_LAYER_SIZE+1);
-    	
-    	
-        for(int i = 0; i < training.length; i++){
-        	Matrix forward = computeHypothesis(training[i], theta[1], theta[2]);
-        	Matrix err3 = new Matrix(NUM_OUTPUT_CLASSES,1);
-        	for(int j = 0; j < NUM_OUTPUT_CLASSES; j++){
-        		err3.set(j, 0, forward.get(j, 0) - output[i].get(j, 0));
-        	}
-        	Matrix err2 = new Matrix(HIDDEN_LAYER_SIZE+1,1);
-        	err2 = theta[2].transpose().times(err3);
+        for(int iterations = 0; iterations < 50; iterations++){
+        	Matrix delta1 = new Matrix(HIDDEN_LAYER_SIZE,HIDDEN_LAYER_SIZE+1);
+            Matrix delta2 = new Matrix(NUM_OUTPUT_CLASSES,HIDDEN_LAYER_SIZE+1);
         	
-        	for(int k = 0; k < HIDDEN_LAYER_SIZE+1; k++){
-        		err2.set(k, 0, err2.get(k, 0)*outputA2.get(k, 0)*(1-outputA2.get(k, 0)));
+        	if((iterations+1)%10==0){
+        		System.out.println(iterations+1);
         	}
-        	
-        	delta2 = delta2.plus(err3.times(outputA2.transpose()));
-        	Matrix updateErr2 = new Matrix(HIDDEN_LAYER_SIZE,1);
-        	Matrix updateA = new Matrix(HIDDEN_LAYER_SIZE+1,1);
-        	updateA.set(0, 0, 1);
-        	for(int l = 0; l < HIDDEN_LAYER_SIZE; l++){
-        		updateErr2.set(l, 0, err2.get(l+1, 0));
-        		updateA.set(l+1, 0, training[i].get(l, 0));
-        	}
-        	
-        	delta1 = delta1.plus(updateErr2.times(updateA.transpose()));
+        	for(int i = 0; i < training.length; i++){
+            	Matrix forward = computeHypothesis(training[i], theta[1], theta[2]);
+            	Matrix err3 = new Matrix(NUM_OUTPUT_CLASSES,1);
+            	for(int j = 0; j < NUM_OUTPUT_CLASSES; j++){
+            		err3.set(j, 0, forward.get(j, 0) - output[i].get(j, 0));
+            	}
+            	Matrix err2 = new Matrix(HIDDEN_LAYER_SIZE+1,1);
+            	err2 = (theta[2].transpose()).times(err3);
+            	
+            	for(int k = 0; k < HIDDEN_LAYER_SIZE+1; k++){
+            		err2.set(k, 0, err2.get(k, 0)*outputA2.get(k, 0)*(1-outputA2.get(k, 0)));
+            	}
+            	
+            	delta2 = delta2.plus(err3.times(outputA2.transpose()));
+            	Matrix updateErr2 = new Matrix(HIDDEN_LAYER_SIZE,1);
+            	Matrix updateA = new Matrix(HIDDEN_LAYER_SIZE+1,1);
+            	updateA.set(0, 0, 1);
+            	for(int l = 0; l < HIDDEN_LAYER_SIZE; l++){
+            		updateErr2.set(l, 0, err2.get(l+1, 0));
+            		updateA.set(l+1, 0, training[i].get(l, 0));
+            	}
+            	
+            	delta1 = delta1.plus(updateErr2.times(updateA.transpose()));
+            }
+        	theta[1] = theta[1].minus(delta1.times(DEFAULT_ALPHA/training.length));
+        	theta[2] = theta[2].minus(delta2.times(DEFAULT_ALPHA/training.length));
         }
-        result[1] = theta[1].minus(delta1.times(1/training.length));
-        result[2] = theta[2].minus(delta2.times(1/training.length));
-        
 
-        return result;
+        return theta;
     }
 
     private void readTrainingData() {
