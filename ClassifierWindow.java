@@ -63,8 +63,8 @@ public class ClassifierWindow extends WindowManager {
     private static final String BORDER = new String("      ");
     private static final double epsilon = 1.0;
     private static final long DEFAULT_SEED = 478978392;
-    private static final double DEFAULT_LAMBDA_VALUE = 1.0;
-    private static final double DEFAULT_ALPHA = 0.001;
+    private static final double DEFAULT_LAMBDA_VALUE = 0.001;
+    private static final double DEFAULT_ALPHA = 0.5;
     private static final int DEFAULT_NUM_ITERATIONS = 500;
     private static final double STOP_THRESHOLD = 0.0001;
     // This stop the program if we grow too far above our achieved minimum
@@ -441,7 +441,7 @@ public class ClassifierWindow extends WindowManager {
         theta[2] = createInitialTheta(NUM_OUTPUT_CLASSES, HIDDEN_LAYER_SIZE + 1);
     	
         
-        for(int iterations = 0; iterations < 50; iterations++){
+        for(int iterations = 0; iterations < 500; iterations++){
         	Matrix delta1 = new Matrix(HIDDEN_LAYER_SIZE,HIDDEN_LAYER_SIZE+1);
             Matrix delta2 = new Matrix(NUM_OUTPUT_CLASSES,HIDDEN_LAYER_SIZE+1);
         	
@@ -474,6 +474,8 @@ public class ClassifierWindow extends WindowManager {
             }
         	theta[1] = theta[1].minus(delta1.times(DEFAULT_ALPHA/training.length));
         	theta[2] = theta[2].minus(delta2.times(DEFAULT_ALPHA/training.length));
+        	
+        	//System.out.println("JVALUE: " + jTheta(training, output, theta, lambda));
         }
 
         return theta;
@@ -732,15 +734,16 @@ public class ClassifierWindow extends WindowManager {
                 jTheta += outputData[i].get(k,0)*Math.log(hyp.get(k,0))+(1-outputData[i].get(k,0))*Math.log(1-hyp.get(k,0));
             }
         }
-        jTheta *= (-1 / trainingData.length);
-
+        //System.out.println("JTheta is now " + jTheta + " M = " + trainingData.length);
+        jTheta *= ((double)-1/trainingData.length);
+        //System.out.println("JTheta without regularization: " + jTheta);
         double reg = 0;
         
-        for (int l = 0; l < thetaValues.length - 1; l++)
+        for (int l = 1; l < thetaValues.length - 1; l++)
             reg += sumSquaredMatrixEntries(thetaValues[l]);
-
+        
         jTheta += (reg*lambdaValue/(2*trainingData.length));
- 
+        //System.out.println("reg is: " + (reg*lambdaValue/(2*trainingData.length)) + "JVALUE final: " + jTheta);
 
         return jTheta;
 
