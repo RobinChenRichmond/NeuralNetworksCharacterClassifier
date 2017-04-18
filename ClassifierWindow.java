@@ -63,7 +63,7 @@ public class ClassifierWindow extends WindowManager {
     private static final String BORDER = new String("      ");
     private static final double epsilon = 1.0;
     private static final long DEFAULT_SEED = 478978392;
-    private static final double DEFAULT_LAMBDA_VALUE = 0.001;
+    private static final double DEFAULT_LAMBDA_VALUE = 0.1;
     private static final double DEFAULT_ALPHA = 0.5;
     private static final int DEFAULT_NUM_ITERATIONS = 500;
     private static final double STOP_THRESHOLD = 0.0001;
@@ -441,7 +441,7 @@ public class ClassifierWindow extends WindowManager {
         theta[2] = createInitialTheta(NUM_OUTPUT_CLASSES, HIDDEN_LAYER_SIZE + 1);
     	
         
-        for(int iterations = 0; iterations < 500; iterations++){
+        for(int iterations = 0; iterations < DEFAULT_NUM_ITERATIONS; iterations++){
         	Matrix delta1 = new Matrix(HIDDEN_LAYER_SIZE,HIDDEN_LAYER_SIZE+1);
             Matrix delta2 = new Matrix(NUM_OUTPUT_CLASSES,HIDDEN_LAYER_SIZE+1);
         	
@@ -690,12 +690,14 @@ public class ClassifierWindow extends WindowManager {
     		
     	}
     	
+    	
     	for(int p = 1; p < vector.length; p++){
     		Matrix[] thetaPlus = new Matrix[thetaValues.length];
     		Matrix[] thetaMinus = new Matrix[thetaValues.length];
-    		thetaPlus[p] = new Matrix(thetaValues[p].getRowDimension(),thetaValues[p].getColumnDimension());
-    		thetaMinus[p] = new Matrix(thetaValues[p].getRowDimension(),thetaValues[p].getColumnDimension());
+    		
     		for(int index = 1; index < vector.length; index++){
+    			thetaPlus[index] = new Matrix(thetaValues[index].getRowDimension(),thetaValues[index].getColumnDimension());
+        		thetaMinus[index] = new Matrix(thetaValues[index].getRowDimension(),thetaValues[index].getColumnDimension());
     			for(int j = 0; j < thetaValues[p].getRowDimension(); j++){
     				for(int k = 0; k < thetaValues[p].getColumnDimension(); k++){
     					if(index==p){
