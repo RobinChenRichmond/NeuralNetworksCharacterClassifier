@@ -441,12 +441,12 @@ public class ClassifierWindow extends WindowManager {
         theta[2] = createInitialTheta(NUM_OUTPUT_CLASSES, HIDDEN_LAYER_SIZE + 1);
     	
         
-        for(int iterations = 0; iterations < DEFAULT_NUM_ITERATIONS; iterations++){
+        for(int iterations = 1; iterations <= DEFAULT_NUM_ITERATIONS; iterations++){
         	Matrix delta1 = new Matrix(HIDDEN_LAYER_SIZE,HIDDEN_LAYER_SIZE+1);
             Matrix delta2 = new Matrix(NUM_OUTPUT_CLASSES,HIDDEN_LAYER_SIZE+1);
         	
-        	if((iterations+1)%10==0){
-        		System.out.println(iterations+1);
+        	if(iterations%10==0){
+        		System.out.println(iterations);
         	}
         	for(int i = 0; i < training.length; i++){
             	Matrix forward = computeHypothesis(training[i], theta[1], theta[2]);
@@ -472,6 +472,20 @@ public class ClassifierWindow extends WindowManager {
             	
             	delta1 = delta1.plus(updateErr2.times(updateA.transpose()));
             }
+        	
+        	/*
+        	if(iterations%100==0){
+        		Matrix[] v = gradientCheck(training, output, theta, lambda);
+        		System.out.println("NOW GRADIENT CHECKING: ");
+        		for(int z = 0; z < delta1.getRowDimension(); z++){
+            		for(int x = 0; x < delta1.getColumnDimension(); x++){
+            			System.out.print(delta1.times(1/training.length).get(z, x)-v[1].get(z, x)+ " ");
+            		}
+            		System.out.println();
+            	}
+        	}*/
+        	
+        	
         	theta[1] = theta[1].minus(delta1.times(DEFAULT_ALPHA/training.length));
         	theta[2] = theta[2].minus(delta2.times(DEFAULT_ALPHA/training.length));
         	
@@ -685,36 +699,35 @@ public class ClassifierWindow extends WindowManager {
     private Matrix[] gradientCheck(Matrix[] trainingData, Matrix[] outputData, Matrix[] thetaValues, double lambdaValue) {
     	Matrix[] vector = new Matrix[thetaValues.length];
     	
-    	for(int i = 0; i < vector.length; i++){
+    	for(int i = 1; i < thetaValues.length; i++){
     		vector[i] = new Matrix(thetaValues[i].getRowDimension(),thetaValues[i].getColumnDimension());
     		
     	}
     	
+    	Matrix[] thetaPlus = new Matrix[thetaValues.length];
+		Matrix[] thetaMinus = new Matrix[thetaValues.length];
+		
+		for(int index = 1; index < vector.length; index++){
+			thetaPlus[index] = new Matrix(thetaValues[index].getRowDimension(),thetaValues[index].getColumnDimension());
+    		thetaMinus[index] = new Matrix(thetaValues[index].getRowDimension(),thetaValues[index].getColumnDimension());
+			for(int j = 0; j < thetaValues[index].getRowDimension(); j++){
+				for(int k = 0; k < thetaValues[index].getColumnDimension(); k++){
+					thetaPlus[index].set(j, k, thetaValues[index].get(j, k));
+					thetaMinus[index].set(j, k, thetaValues[index].get(j, k));
+				}
+			}
+		}
     	
-    	for(int p = 1; p < vector.length; p++){
-    		Matrix[] thetaPlus = new Matrix[thetaValues.length];
-    		Matrix[] thetaMinus = new Matrix[thetaValues.length];
-    		
-    		for(int index = 1; index < vector.length; index++){
-    			thetaPlus[index] = new Matrix(thetaValues[index].getRowDimension(),thetaValues[index].getColumnDimension());
-        		thetaMinus[index] = new Matrix(thetaValues[index].getRowDimension(),thetaValues[index].getColumnDimension());
-    			for(int j = 0; j < thetaValues[p].getRowDimension(); j++){
-    				for(int k = 0; k < thetaValues[p].getColumnDimension(); k++){
-    					if(index==p){
-    						thetaPlus[p].set(j, k, thetaValues[p].get(j, k)+GRADIENT_CHECKING_EPSILON);
-    						thetaMinus[p].set(j, k, thetaValues[p].get(j, k)-GRADIENT_CHECKING_EPSILON);
-    					} else{
-    						thetaPlus[p].set(j, k, thetaValues[p].get(j, k));
-    						thetaMinus[p].set(j, k, thetaValues[p].get(j, k));
-    					}
-    				}
-    			}
-    		}
-    		
+    	
+    	for(int p = 1; p < vector.length; p++){   		
     		for(int q = 0; q < thetaValues[p].getRowDimension(); q++){
     			for(int r = 0; r < thetaValues[p].getColumnDimension(); r++){
+    				thetaPlus[p].set(q, r, thetaValues[p].get(q, r)+GRADIENT_CHECKING_EPSILON);
+					thetaMinus[p].set(q, r, thetaValues[p].get(q, r)-GRADIENT_CHECKING_EPSILON);
     				double derivative = (jTheta(trainingData,outputData,thetaPlus,lambdaValue)-jTheta(trainingData,outputData,thetaMinus,lambdaValue))/(2*GRADIENT_CHECKING_EPSILON);
     				vector[p].set(q, r, derivative);
+    				thetaPlus[p].set(q, r, thetaValues[p].get(q, r));
+					thetaMinus[p].set(q, r, thetaValues[p].get(q, r));
     			}
     		}
     	}
